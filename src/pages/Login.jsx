@@ -1,9 +1,8 @@
-// components/User.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 
-function Login() {
+function Login({setUsername, setUserId}) {
   const navigate = useNavigate()
     
   const [usernameText, setUsernameText] = useState("")
@@ -12,12 +11,14 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let res = await axios.post('http://localhost:7001/login', { username:usernameText, password:passwordText });
+      let res = await axios.post('https://auth-server-production-90c7.up.railway.app/login', { username:usernameText, password:passwordText });
       // console.log(res)
       if(res.status == 200){
         const jwt = res.data.token
 
         localStorage.setItem("token", jwt)
+        setUserId(res.data.userId)
+        setUsername(usernameText)
         localStorage.setItem("userId", res.data.userId)
         localStorage.setItem("username", usernameText)
 

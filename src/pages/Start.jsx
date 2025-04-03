@@ -1,25 +1,49 @@
 import { useState, useEffect } from "react"
 import LogoutButton from "../components/LogoutButton"
+// import StartSessionButton from "./StartSessionButton"
+// import JoinSessionButton from "./JoinSessionButton"
+import handleSocket from "../controllers/handleSocket"
+import { createOffer } from "../controllers/handleRTCConnection"
 
-function Start(){
+function Start({username, userId}){
 
-    const [username, setUsername] = useState("")
-    const [userId,setUserId] = useState("")
-
+    const [socket, setSocket] = useState("")
+    let usernameTemp
+    let userIdTemp 
     useEffect(() => {
-        setUsername(localStorage.getItem('username'))
-        setUserId(localStorage.getItem('userId'))
-    
+        usernameTemp = localStorage.getItem("username")
+        userIdTemp = localStorage.getItem("userId")
     }, [])
+    
+
+    const handleJoinSession = async (userId) => {
+        let socketVar = handleSocket(userId)
+        setSocket(socketVar)
+        let targetUserId=prompt("Enter the users Id you want to connect to!")
+        await createOffer(userId, targetUserId, socketVar)
+    }
+    const handleStartSession = () => {
+        let socketVar = handleSocket(userId)
+        setSocket(socketVar)
+    }
     
 
     return(
         <>
             <h1>Start</h1>
-            <p>Username: {username}</p>
-            <p>UserId: {userId}</p>
-            <button>Create a game</button>
-            <button>Join a room</button>
+            <p>Username: {usernameTemp}</p>
+            <p>UserId: {userIdTemp}</p>
+            {!socket ? 
+            (
+                <>
+                    <button onClick={() => handleStartSession(userIdTemp)}>Start session</button>
+                    <button onClick={() => handleJoinSession(userIdTemp)}>Join session</button>
+                </>
+            )
+            :
+            (<p>Socket connection started</p>)
+
+        }
             <LogoutButton/>
         </>
     )

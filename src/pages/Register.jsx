@@ -10,7 +10,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:7001/register', { username, password });
+      await axios.post('https://auth-server-production-90c7.up.railway.app/register', { username, password });
       alert('Registration successful');
     } catch (err) {
       console.log(err);

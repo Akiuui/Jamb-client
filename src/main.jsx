@@ -11,17 +11,20 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx"
 
 function Routing(){
 
+  const [username, setUsername] = useState("")
+  const [userId, setUserId] = useState("")
+
   return (
     <BrowserRouter>
       <nav>
         <Link to="/login">Login</Link> | <Link to="/register">Register</Link>
       </nav>
       <Routes>
-        <Route path='/login' element={<Login/>}/>
+        <Route path='/login' element={<Login setUsername={setUsername} setUserId={setUserId}/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/start' element={
           <ProtectedRoute>
-            <Start/>
+            <Start username={username} userId={userId}/>
           </ProtectedRoute>
         }/>
       </Routes>
