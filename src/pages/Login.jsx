@@ -10,25 +10,20 @@ function Login({setUsername, setUserId}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      let res = await axios.post('https://auth-server-production-90c7.up.railway.app/login', { username:usernameText, password:passwordText });
-      // console.log(res)
-      if(res.status == 200){
-        const jwt = res.data.token
+      await axios.post(
+        'https://auth-server-production-90c7.up.railway.app/login',
+        { username:usernameText, password:passwordText },
+        { withCredentials: true } // Important for cookies!
+      )
 
-        localStorage.setItem("token", jwt)
-        setUserId(res.data.userId)
-        setUsername(usernameText)
-        localStorage.setItem("userId", res.data.userId)
-        localStorage.setItem("username", usernameText)
+      alert("Logged in")
 
-        alert("Logged in")
+      setPasswordText("")
+      setUsernameText("")
 
-        setPasswordText("")
-        setUsernameText("")
-
-        navigate("/start")
-      }
+      navigate("/start")
 
     } catch (err) {
       if(err.status == 401){

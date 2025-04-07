@@ -1,49 +1,53 @@
 import { useState, useEffect } from "react"
 import LogoutButton from "../components/LogoutButton"
-// import StartSessionButton from "./StartSessionButton"
-// import JoinSessionButton from "./JoinSessionButton"
-import handleSocket from "../controllers/handleSocket"
-import { createOffer } from "../controllers/handleRTCConnection"
+import StartSessionButton from "../components/StartSessionButton.jsx"
+import JoinSessionButton from "../components/JoinSessionButton.jsx"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
-function Start({username, userId}){
+function Start(){
 
-    const [socket, setSocket] = useState("")
-    let usernameTemp
-    let userIdTemp 
+    const navigate = useNavigate()
+
+    // const [socket, setSocket] = useState("")
+    const [user, setUser] = useState([])
+    const [showButton, setShowButton] = useState("both")
+    const [socketUrl, setSocketUrl] = useState("ws://signaling-server-production-5768.up.railway.app")
+
     useEffect(() => {
-        usernameTemp = localStorage.getItem("username")
-        userIdTemp = localStorage.getItem("userId")
-    }, [])
-    
+            axios.get("https://auth-server-production-90c7.up.railway.app/protected", {withCredentials:true})
+            // .then((res) => console.log(res.data.user))
+            .then((res) => setUser(res.data.user))
+            .catch((error) => {
+                if (axios.isAxiosError(error)) {
 
-    const handleJoinSession = async (userId) => {
-        let socketVar = handleSocket(userId)
-        setSocket(socketVar)
-        let targetUserId=prompt("Enter the users Id you want to connect to!")
-        await createOffer(userId, targetUserId, socketVar)
-    }
-    const handleStartSession = () => {
-        let socketVar = handleSocket(userId)
-        setSocket(socketVar)
-    }
-    
+                    console.error("❌ Axios error:", error.message);
+                    if (error.response && error.response.status === 401) {
+                        alert("Session expired, please log in again");
+                        navigate("/login")
+                    }
+                
+                }
+            })
+
+    }, [])
 
     return(
         <>
             <h1>Start</h1>
-            <p>Username: {usernameTemp}</p>
-            <p>UserId: {userIdTemp}</p>
-            {!socket ? 
-            (
-                <>
-                    <button onClick={() => handleStartSession(userIdTemp)}>Start session</button>
-                    <button onClick={() => handleJoinSession(userIdTemp)}>Join session</button>
-                </>
-            )
-            :
-            (<p>Socket connection started</p>)
+            <p>Username: {user.username}</p>
+            <p>UserId: {user.userId}</p>
 
-        }
+            {showButton == "both" || showButton == "startSession" ?
+                <StartSessionButton setShowButton={setShowButton} userId={user.userId} socketUrl={socketUrl}/>
+                :
+                <></>
+            }
+            {showButton == "both" || showButton == "joinSession" ?
+                <JoinSessionButton setShowButton={setShowButton} userId={user.userId} socketUrl={socketUrl}/>
+                :
+                <></>
+            }
             <LogoutButton/>
         </>
     )

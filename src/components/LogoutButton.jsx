@@ -6,9 +6,8 @@ const Logout = () => {
     const navigate = useNavigate()
 
     const handleLogout = async () => {
-        localStorage.removeItem("token")
-        localStorage.removeItem("userId")
-        localStorage.removeItem("username")
+
+        await axios.get("https://auth-server-production-90c7.up.railway.app/logout")
 
         navigate("/login")
     }

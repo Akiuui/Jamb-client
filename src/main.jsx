@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
 import Start from "./pages/Start.jsx"
-import ProtectedRoute from "./components/ProtectedRoute.jsx"
 
 
 function Routing(){
@@ -23,9 +22,7 @@ function Routing(){
         <Route path='/login' element={<Login setUsername={setUsername} setUserId={setUserId}/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/start' element={
-          <ProtectedRoute>
-            <Start username={username} userId={userId}/>
-          </ProtectedRoute>
+        <Start/>
         }/>
       </Routes>
     </BrowserRouter>
